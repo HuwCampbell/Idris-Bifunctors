@@ -12,16 +12,16 @@ record Dual a where
   constructor toDual
   getDual : a
 
-instance Semigroup s => Semigroup (Dual s) where
+Semigroup s => Semigroup (Dual s) where
   (toDual a) <+> (toDual b) = toDual (b <+> a)
 
-instance Monoid s => Monoid (Dual s) where
+Monoid s => Monoid (Dual s) where
   neutral = toDual neutral
 
 --   }}}
 
 ||| Bifoldables
-class Bifoldable (p : Type -> Type -> Type) where
+interface Bifoldable (p : Type -> Type -> Type) where
 
   ||| Combine the elements of a structure using a monoid
   |||
@@ -175,20 +175,20 @@ record Any where
   constructor toAny
   getAny : Bool
 
-instance Semigroup Any where
+Semigroup Any where
   (toAny a) <+> (toAny b) = toAny (a || b)
 
-instance Monoid Any where
+Monoid Any where
   neutral = toAny False
 
 record All where
   constructor toAll
   getAll : Bool
 
-instance Semigroup All where
+Semigroup All where
   (toAll a) <+> (toAll b) = toAll (a && b)
 
-instance Monoid All where
+Monoid All where
   neutral = toAll True
 
 --   }}}
@@ -211,8 +211,8 @@ biany p q = getAny . bifoldMap (toAny . p) (toAny . q)
 biall : Bifoldable t => (a -> Bool) -> (b -> Bool) -> t a b -> Bool
 biall p q = getAll . bifoldMap (toAll . p) (toAll . q)
 
-instance Bifoldable Pair where
+Bifoldable Pair where
   bifoldMap f g (a, b) = f a <+> g b
 
-instance Bifoldable Either where
+Bifoldable Either where
   bifoldMap f g = either f g
